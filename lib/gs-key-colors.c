@@ -161,6 +161,8 @@ k_means (GArray    *colors,
 	const ClusterPixel8 *pixels_end;
 	Pixel8 cluster_centres[n_clusters];
 	CentroidAccumulator cluster_accumulators[n_clusters];
+	gboolean used_clusters[n_clusters];
+	guint covered_clusters = 0;
 	guint n_assignments_changed;
 	guint n_iterations = 0;
 	guint assignments_termination_limit;
@@ -180,6 +182,8 @@ k_means (GArray    *colors,
 	pixels = (ClusterPixel8 *) raw_pixels;
 	pixels_end = &pixels[height * width];
 
+	memset (used_clusters, 0, sizeof (used_clusters));
+
 	/* Initialise the clusters using the Random Partition method: randomly
 	 * assign a starting cluster to each pixel.
 	 *
@@ -191,8 +195,17 @@ k_means (GArray    *colors,
 	for (ClusterPixel8 *p = pixels; p < pixels_end; p++) {
 		if (p->alpha < minimum_alpha)
 			p->cluster = G_N_ELEMENTS (cluster_centres);
-		else
+		else {
 			p->cluster = g_random_int_range (0, G_N_ELEMENTS (cluster_centres));
+
+			if (covered_clusters < n_clusters) {
+				while (used_clusters[p->cluster])
+					p->cluster = (p->cluster + 1) % n_clusters;
+
+				used_clusters[p->cluster] = TRUE;
+				covered_clusters++;
+			}
+		}
 	}
 
 	/* Iterate until every cluster is relatively settled. This is determined
