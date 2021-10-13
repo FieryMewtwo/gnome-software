@@ -3623,6 +3623,17 @@ gs_flatpak_file_to_app_ref (GsFlatpak *self,
 	g_assert (parsed_ref != NULL);
 	g_list_free_full (g_steal_pointer (&txn_ops), g_object_unref);
 
+	xremote = flatpak_installation_get_remote_by_name (self->installation,
+							   remote_name,
+							   cancellable,
+							   error);
+	if (xremote == NULL) {
+		gs_flatpak_error_convert (error);
+		return NULL;
+	}
+	origin_url = flatpak_remote_get_url (xremote);
+	g_printerr ("origin_url = %s for remote %s\n", origin_url, remote_name);
+
 	/* fetch remote ref */
 	remote_ref = flatpak_installation_fetch_remote_ref_sync (self->installation,
 							   remote_name,
@@ -3666,7 +3677,7 @@ gs_flatpak_file_to_app_ref (GsFlatpak *self,
 	}
 
 	/* set the origin data */
-	xremote = flatpak_installation_get_remote_by_name (self->installation,
+	/*xremote = flatpak_installation_get_remote_by_name (self->installation,
 							   remote_name,
 							   cancellable,
 							   error);
@@ -3674,7 +3685,7 @@ gs_flatpak_file_to_app_ref (GsFlatpak *self,
 		gs_flatpak_error_convert (error);
 		return NULL;
 	}
-	origin_url = flatpak_remote_get_url (xremote);
+	origin_url = flatpak_remote_get_url (xremote);*/
 	if (origin_url == NULL) {
 		g_set_error (error,
 			     GS_PLUGIN_ERROR,
