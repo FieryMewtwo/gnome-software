@@ -1039,7 +1039,7 @@ gs_plugins_flatpak_broken_remote_func (GsPluginLoader *plugin_loader)
 	g_assert_cmpstr (gs_app_get_id (app), ==, "org.test.Chiron");
 #if FLATPAK_CHECK_VERSION(1,1,2)
 	g_assert_true (as_utils_data_id_equal (gs_app_get_unique_id (app),
-			"user/flatpak/chiron-origin/org.test.Chiron/master"));
+			"user/flatpak/test/org.test.Chiron/master"));
 #else
 	g_assert_true (as_utils_data_id_equal (gs_app_get_unique_id (app),
 			"user/flatpak/org.test.Chiron-origin/org.test.Chiron/master"));
@@ -1208,7 +1208,7 @@ flatpak_bundle_or_ref_helper (GsPluginLoader *plugin_loader,
 #if FLATPAK_CHECK_VERSION(1,1,2)
 		g_printerr ("app unique ID = %s\n", gs_app_get_unique_id (app));
 		g_assert_true (as_utils_data_id_equal (gs_app_get_unique_id (app),
-				"user/flatpak/chiron-origin/org.test.Chiron/master"));
+				"user/flatpak/test/org.test.Chiron/master"));
 #else
 		g_assert_true (as_utils_data_id_equal (gs_app_get_unique_id (app),
 				"user/flatpak/org.test.Chiron-origin/org.test.Chiron/master"));
