@@ -1206,6 +1206,7 @@ flatpak_bundle_or_ref_helper (GsPluginLoader *plugin_loader,
 		g_assert_true (gs_flatpak_app_get_file_kind (app) == GS_FLATPAK_APP_FILE_KIND_BUNDLE);
 	} else {
 #if FLATPAK_CHECK_VERSION(1,1,2)
+		g_printerr ("app unique ID = %s\n", gs_app_get_unique_id (app));
 		g_assert_true (as_utils_data_id_equal (gs_app_get_unique_id (app),
 				"user/flatpak/chiron-origin/org.test.Chiron/master"));
 #else
