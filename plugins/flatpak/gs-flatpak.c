@@ -3617,6 +3617,7 @@ gs_flatpak_file_to_app_ref (GsFlatpak *self,
 		} else {
 			remote_name = flatpak_transaction_operation_get_remote (op);
 			g_debug ("auto-created remote name: %s", remote_name);
+			//TODO grab metadata as needed: download size, installed size, EOL status, commit
 			break;
 		}
 	}
@@ -3635,6 +3636,7 @@ gs_flatpak_file_to_app_ref (GsFlatpak *self,
 	g_printerr ("origin_url = %s for remote %s\n", origin_url, remote_name);
 
 	/* fetch remote ref */
+	//TODO make this conditional on having the right flatpak version so that it will work
 	remote_ref = flatpak_installation_fetch_remote_ref_sync (self->installation,
 							   remote_name,
 							   flatpak_ref_get_kind (parsed_ref),

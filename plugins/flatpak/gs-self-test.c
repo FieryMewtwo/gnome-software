@@ -735,7 +735,9 @@ gs_plugins_flatpak_runtime_repo_func (GsPluginLoader *plugin_loader)
 
 	/* get runtime */
 	runtime = gs_app_get_runtime (app);
-	g_assert_cmpstr (gs_app_get_unique_id (runtime), ==, "user/flatpak/*/org.test.Runtime/master");
+	g_assert_cmpstr (gs_app_get_unique_id (runtime), ==, "user/flatpak/test/org.test.Runtime/master");
+	//TODO change this to AVAILABLE but also investigate whether it should
+	//be AVAILABLE for the app itself and related areas
 	g_assert_cmpint (gs_app_get_state (runtime), ==, GS_APP_STATE_AVAILABLE_LOCAL);
 
 	/* check the number of sources */
