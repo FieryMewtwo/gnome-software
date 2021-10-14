@@ -143,6 +143,8 @@ gs_application_init (GsApplication *application)
 		{ "interaction", '\0', 0, G_OPTION_ARG_STRING, NULL,
 		  _("The kind of interaction expected for this action: either "
 		    "‘none’, ‘notify’, or ‘full’"), NULL },
+		{ "show-appdata", '\0', 0, G_OPTION_ARG_FILENAME, NULL,
+		  _("Show a local appdata file"), _("FILENAME") },
 		{ "verbose", '\0', 0, G_OPTION_ARG_NONE, NULL,
 		  _("Show verbose debugging information"), NULL },
 		{ "autoupdate", 0, 0, G_OPTION_ARG_NONE, NULL,
@@ -787,6 +789,23 @@ filename_activated (GSimpleAction *action,
 }
 
 static void
+show_appdata_activated (GSimpleAction *action,
+			GVariant      *parameter,
+			gpointer       data)
+{
+	GsApplication *app = GS_APPLICATION (data);
+	const gchar *filename;
+	g_autoptr(GFile) file = NULL;
+
+	g_variant_get (parameter, "(&s)", &filename);
+
+	file = g_file_new_for_path (filename);
+
+	gs_shell_reset_state (app->shell);
+	gs_shell_show_appdata (app->shell, file);
+}
+
+static void
 launch_activated (GSimpleAction *action,
 		  GVariant      *parameter,
 		  gpointer       data)
@@ -903,6 +922,7 @@ static GActionEntry actions_after_loading[] = {
 	{ "install", install_activated, "(su)", NULL, NULL },
 	{ "filename", filename_activated, "(s)", NULL, NULL },
 	{ "install-resources", install_resources_activated, "(sassss)", NULL, NULL },
+	{ "show-appdata", show_appdata_activated, "(s)", NULL, NULL },
 	{ "nop", NULL, NULL, NULL }
 };
 
@@ -1219,6 +1239,16 @@ gs_application_handle_local_options (GApplication *app, GVariantDict *options)
 		absolute_filename = g_file_get_path (file);
 		g_action_group_activate_action (G_ACTION_GROUP (app),
 						"filename",
+						g_variant_new ("(s)", absolute_filename));
+		rc = 0;
+	} else if (g_variant_dict_lookup (options, "show-appdata", "^&ay", &local_filename)) {
+		g_autoptr(GFile) file = NULL;
+		g_autofree gchar *absolute_filename = NULL;
+
+		file = g_file_new_for_path (local_filename);
+		absolute_filename = g_file_get_path (file);
+		g_action_group_activate_action (G_ACTION_GROUP (app),
+						"show-appdata",
 						g_variant_new ("(s)", absolute_filename));
 		rc = 0;
 	}
